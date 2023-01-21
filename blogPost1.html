@@ -28,7 +28,7 @@
 					<p style="font-size:30px;">I enjoy reading books, and have a tough time multitasking between looking down at my phone and going about my day to day chores. 
 This lead to the building a simple API endpoint that could take any book saved as a pdf, and apply text to speech on top of it in order to return an audio recording of that book.</p>  
 <br>
-<p>This API is still in it's nascent stages and under development, and was more of an oppurtunity to figure out a production grade API setup(Flask, Ngnix and Gunicorn),
+This API is still in it's nascent stages and under development, and was more of an oppurtunity to figure out a production grade API setup(Flask, Ngnix and Gunicorn),
 learn and apply a few design patterns, figure out bare bone implementations of the different types of caching mechanisms, design readable flowcharts, and investigate the internals of popular file extensions like the .pdf, .docx and the .wav file. I also got to build an API unit testing library using pytest and requests. 
 			</p>
 <br>	
@@ -36,7 +36,7 @@ It took me a great deal of effort to get a rough idea of all of the above, and i
 <br>
 
 Without further ado, Here's a brief idea of what this post will cover:<br>
-<p>
+
 1. What is a Document - Converting any type of document into a piece of text <br>
 
 A document at its simplest form is a file object that stores both textual and non textual context in a structured or unstructured format. <br>
@@ -48,11 +48,11 @@ The below diagram depicts how a pdf is broken down and parsed in order to group 
 					<p style="font-size:30px;">PDFs are initially broken down into a collection of content streams, and these streams are parsed as above. Content Streams are groups of characters that when parsed in a recursive fashion form a psedo language. More about this language can be found here: 
 
 			</p>
-<p>
+
 	<br>
 On the other hand, docx files come in built with a XML representation that can be easily parsed into a text variable. HTML files also have a similar representation, differing in the name of the node that produces the text in the first place. 
 			</p>
-<p>
+
 	<br>
 2. What is a wav file - wav file format -Dealing with wav files in Scipy, How do Sampling Rate and Wave Form combine to make one .wav file, using TTS in Python - https://stackoverflow.com/questions/53460512/python-waveform-to-wav-file-converter
 	<br>
@@ -64,12 +64,12 @@ The below diagram connects the concepts of waveform, signal rate, bit depth to a
 			<br>
 					<p style="font-size:30px;">3. WebServers and Application Servers - Why Flask isn't Enough - How does flask fit into Nginx, UWsgi and Gunicorn
 			</p>
-<p>			
+			
 	<br>
 Flask is a great web application microframework built on top of wSGI(web server gateway interface). It is NOT a webserver, though it comes built in with Werkzeug. A microframework is a type of framework that is both simple in its usage and implementation. but is made for extensibility. This means that you decide a lot of the things that you want your webapp to interact with, be it with the type of database it interacts with, or if you want to abstract all of your database logic into an ORM etc. 
 			</p>
 The meat of the business logic that actually parses the pdf, and creates the wav file lives within an endpoint, that is implemented through flask. 
-<p><br>
+<br>
 We take this logic, and attach it to a route, that the client can use to communicate with the business logic itself. 
 
 This sounds straightforward, and even works to an extent. But there are several assumptions we've made that dont make this approach ideal. Some of these assumptions are:
@@ -109,7 +109,7 @@ Extracting text from a pdf, then passing that to a text to speech converter, the
 For the time being, the API caches everything, and does not have the concept of a user, though implementing one would be fairly straightforward. Credentials specific to some user would be verfiied by a database and a hash check, and every subsequent request is either done in lieu of caching being enabled or disabled. 
 <br>
 Caching can be implemented in several ways, especially for file objects. Some of these methods include:
-<p>
+
 	<br>
 1. Filesystem Caching( NFS, EXT4)
 	<br>
@@ -122,7 +122,7 @@ Caching can be implemented in several ways, especially for file objects. Some of
 5. Bulk Storage (S3, gridFS)
 	<br>
 			</p>
-			<p>
+			
 We look at 3 of the above:
 <br>
 
@@ -135,7 +135,7 @@ This approach is not only straightforward, but also efficient in most circumstan
 The problem lies in a situation when filesystems starts running out of space. Read/Write performance drops significantly with increase in the number of files saved in total.
 			</p>
 <br>
-<p>
+
 Bulk Storage Caching:
 
 For every request that you get, storing every output you get in a S3 bucket and adding this operation in a registry also seems to be a viable caching option. 
@@ -148,7 +148,7 @@ There are arguments that favor this method of caching as well. Depending on how 
 On the same note, locally run filesystems can crash, and end up purging all your data with it. The chances of that happening with a reputed cloud storage provider is, at the least very unlikely. Depending on how long a file can be allowed to persist, using bulk storage as a cache remains as a viable option, albeit an expensive one. 
 <br>
 			</p>
-			<p>
+			
 In Memory Caching:
 
 <br>
@@ -173,7 +173,7 @@ For this project, we make use of an in memory key-value store called redis.
 
 
 			</p>
-			<p>
+			
 Caching Mechanisms:
 
 
@@ -189,18 +189,18 @@ All of the above methods to cache files can be templated into a process that loo
 4. If its not there, process the request, then add the result in the cache, and then return this value back to the caller. This is called a cache miss. 
 			</p>
 
-<br><p>
+<br>
 This mechanism of caching is called Lazy Loading, and the central idea revolves around it's reliance on the requests it's seen in the past. The cache starts empty and populates over time. 
 <br>
 As expected, this reduces the amount of data that you store in the cache in the first place. If the request has not been seen yet, Why do i have to cache it? 
 		</p>
-		<p>
+		
 			<br>
 This however also means that a cache miss is possible when an unseen request is come across. A cache miss introduces a penalty, by saving the missed request in the cache.
 
 An alternative approach is to prepopulate the cache using some heuristic. A common heuristic is to update the cache whenever a database is written to. While there is no database here, the idea can be extended to prepopulating the cache with very common documents.
 		</p>
-		<p>
+		
 			<br>
 On one hand, the cache is always populated with recent data, and is never stale. 
 <br>
@@ -208,7 +208,7 @@ On the other hand, most of this data is never interacted with, so it's sometimes
 <br>
 This type of caching is called Write-Ahead Caching. 
 		</p>
-		<p>
+		
 			<br>
 More about caching mechanisms can be found at https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/Strategies.html. 
 		</p>
@@ -246,7 +246,7 @@ Building this API without accounting for the above was, and would have been a ni
 <br>
 Suppose there is a new document type that's been released, maybe called .gtf(Good Text Format). The goal now would be to add code to this function to do 2 things.
 </p>
-<p>
+
 	<br>
 a. Determine if the document proved is of the .gtf type.
 	<br>
