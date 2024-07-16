@@ -5,7 +5,6 @@
     <!-- link to main stylesheet -->
     <link rel="stylesheet" type="text/css" href="/css/main.css">
 </head>
-
 <body>
     <nav>
         <ul>
@@ -15,15 +14,13 @@
             <li><a href="blogIndex.html">Blog</a></li>
             <li><a href="https://www.github.com/adinarayanb">Github</a></li>
             <li><a href="https://adinarayanb.github.io/ConfGraphDataViz">Conference Graphr</a></li>
-            <li> <a href = "Adithya_Narayan_Backend_June_18.docx.pdf"> Backend Engineering CV </a></li>
-
+            <li> <a href="Adithya_Narayan_Backend_June_18.docx.pdf"> Backend Engineering CV </a></li>
         </ul>
     </nav>
 
     <div class="container">
         <div class="blurb">
             <h1>Hi there, I'm Adithya Narayan!</h1>
-
             <div style="display: flex; align-items: center;">
                 <img src="profile.jpeg" alt="Adithya Narayan" style="width: 200px; height: 200px; margin-right: 20px;">
                 <div>
@@ -33,10 +30,31 @@
                     <p style="font-size: 20px;">Take a look at my blog to get an idea of what I've worked on in the past, and things that I want to build/am building! Feel free to reach out to me on narayanbadanidiyoo.a@northeastern.edu or my Linkedin if you want to communicate!</p>
                 </div>
             </div>
+            <!-- New div for API data -->
+            <div id="api-data" style="margin-top: 20px; font-size: 20px;"></div>
         </div><!-- /.blurb -->
     </div><!-- /.container -->
 
     <footer>
     </footer>
+
+    <!-- JavaScript to fetch and display API data -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('https://jsonplaceholder.typicode.com/todos/1')
+                .then(response => response.json())
+                .then(data => {
+                    const apiDataDiv = document.getElementById('api-data');
+                    apiDataDiv.innerHTML = `
+                        <p><strong>Todo ID:</strong> ${data.id}</p>
+                        <p><strong>Title:</strong> ${data.title}</p>
+                        <p><strong>Completed:</strong> ${data.completed}</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error fetching API data:', error);
+                });
+        });
+    </script>
 </body>
 </html>
